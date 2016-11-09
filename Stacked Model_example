@@ -1,0 +1,18 @@
+import brew
+from brew.base import Ensemble
+from brew.combination.combiner import Combiner
+from brew.stacking.stacker import EnsembleStack
+from brew.stacking.stacker import EnsembleStackClassifier
+ 
+layer_1 = [SVC(probability=True),
+           XGBClassifier(max_depth=6,n_estimators=100),
+           RandomForestClassifier(n_estimators=100), 
+           ExtraTreesClassifier(n_estimators=100)]
+ 
+layer_2 = [SVC(probability=True), LogisticRegression(max_iter=500)]
+ 
+stack = EnsembleStack(cv=10) # number of folds per layer
+stack.add_layer(Ensemble(layer_1))
+stack.add_layer(Ensemble(layer_2))
+ 
+clf = EnsembleStackClassifier(stack, Combiner('mean'))
